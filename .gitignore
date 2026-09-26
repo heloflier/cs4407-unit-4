@@ -25,3 +25,7 @@ Thumbs.db
 # Computed Data
 *.png
 *.gif
+
+# Other Data
+data/
+.data/
