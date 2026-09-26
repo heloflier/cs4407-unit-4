@@ -146,3 +146,35 @@ print("\nColumn dtypes:")
 print(churn_df.dtypes)
 print("\nChurn distribution:")
 print(churn_df["Churn"].value_counts())
+
+# ---------------------------------------------------------------------------
+# Step 4 / Question 2.i: Handle categorical variables
+# ---------------------------------------------------------------------------
+# customerID is just an identifier, not a predictive feature.
+churn_df = churn_df.drop(columns=["customerID"])
+
+# TotalCharges loaded as text because of blank values for customers with
+# tenure=0 (new customers who haven't been billed yet) - convert to
+# numeric and fill those with 0.
+churn_df["TotalCharges"] = pd.to_numeric(churn_df["TotalCharges"], errors="coerce")
+print(f"\nRows with missing TotalCharges before fill: {churn_df['TotalCharges'].isna().sum()}")
+churn_df["TotalCharges"] = churn_df["TotalCharges"].fillna(0)
+
+# Binary Yes/No columns (and gender) mapped to 1/0. SeniorCitizen is
+# already 0/1 numeric, so it needs no mapping.
+binary_columns = ["gender", "Partner", "Dependents", "PhoneService", "PaperlessBilling", "Churn"]
+binary_mapping = {"Male": 1, "Female": 0, "Yes": 1, "No": 0}
+for column_name in binary_columns:
+    churn_df[column_name] = churn_df[column_name].map(binary_mapping)
+
+# Remaining multi-category columns one-hot encoded.
+multi_category_columns = [
+    "MultipleLines", "InternetService", "OnlineSecurity", "OnlineBackup",
+    "DeviceProtection", "TechSupport", "StreamingTV", "StreamingMovies",
+    "Contract", "PaymentMethod",
+]
+churn_df = pd.get_dummies(churn_df, columns=multi_category_columns)
+
+print("\nDataset shape after encoding:", churn_df.shape)
+print("\nColumn dtypes after encoding:")
+print(churn_df.dtypes.value_counts())
