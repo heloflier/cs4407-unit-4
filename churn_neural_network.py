@@ -11,6 +11,7 @@ import pandas as pd
 from sklearn.linear_model import Perceptron
 from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -200,3 +201,27 @@ churn_df[numeric_columns_to_scale] = scaler.fit_transform(churn_df[numeric_colum
 
 print("\nFeature values after scaling:")
 print(churn_df[numeric_columns_to_scale].describe())
+
+# ---------------------------------------------------------------------------
+# Step 6 / Question 2.i: Train/test split
+# ---------------------------------------------------------------------------
+# Stratified by Churn to preserve the real ~73.5%/26.5% class balance in
+# both splits.
+
+print("\n" + "=" * 70)
+print("QUESTION 2.i: TRAIN/TEST SPLIT")
+print("=" * 70)
+
+X = churn_df.drop(columns=["Churn"])
+y = churn_df["Churn"]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=42, stratify=y
+)
+
+print(f"\nTraining set size: {len(X_train)} rows")
+print(f"Test set size: {len(X_test)} rows")
+print("\nTraining set churn distribution:")
+print(y_train.value_counts(normalize=True).round(4))
+print("\nTest set churn distribution:")
+print(y_test.value_counts(normalize=True).round(4))
