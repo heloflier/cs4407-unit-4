@@ -8,8 +8,8 @@ classifier to predict telecom customer churn, using `scikit-learn`.
 
 - `churn_neural_network.py` — main analysis script (logic gates,
   preprocessing, model, evaluation)
-- `WA_Fn-UseC_-Telco-Customer-Churn.csv` — dataset (Telco Customer
-  Churn), downloaded from Kaggle and committed here for full
+- `data/Telco-Customer-Churn.csv` — dataset (Telco Customer Churn),
+  downloaded from HuggingFace and committed here for full
   reproducibility without any external download step
 - `requirements.txt` — Python dependencies
 

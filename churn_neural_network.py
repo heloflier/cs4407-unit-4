@@ -7,6 +7,7 @@ builds a neural network classifier to predict telecom customer churn.
 """
 
 import numpy as np
+import pandas as pd
 from sklearn.linear_model import Perceptron
 from sklearn.neural_network import MLPClassifier
 import matplotlib
@@ -127,3 +128,21 @@ for ax, model, gate_inputs, gate_outputs, title in panels:
 plt.tight_layout()
 plt.savefig("logic_gates_decision_boundaries.png")
 print("\nSaved plot: logic_gates_decision_boundaries.png")
+
+# ---------------------------------------------------------------------------
+# Step 3 / Question 2.i: Load and inspect the churn dataset
+# ---------------------------------------------------------------------------
+# Loaded from a local file (downloaded from Kaggle) rather than a URL, so
+# the project stays reproducible without any external network dependency.
+
+print("\n" + "=" * 70)
+print("QUESTION 2.i: LOAD AND INSPECT CHURN DATASET")
+print("=" * 70)
+
+churn_df = pd.read_csv("./data/Telco-Customer-Churn.csv")
+
+print("\nDataset shape:", churn_df.shape)
+print("\nColumn dtypes:")
+print(churn_df.dtypes)
+print("\nChurn distribution:")
+print(churn_df["Churn"].value_counts())
