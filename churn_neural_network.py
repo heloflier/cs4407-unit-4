@@ -265,3 +265,22 @@ churn_model.fit(X_train, y_train)
 
 print(f"\nTraining completed after {churn_model.n_iter_} iterations")
 print(f"Final training loss: {churn_model.loss_:.4f}")
+
+# ---------------------------------------------------------------------------
+# Step 9 / Question 2.ii.c: Generate predictions on test data
+# ---------------------------------------------------------------------------
+
+print("\n" + "=" * 70)
+print("QUESTION 2.ii.c: GENERATE PREDICTIONS ON TEST DATA")
+print("=" * 70)
+
+churn_predictions = churn_model.predict(X_test)
+
+print("\nFirst 10 predictions vs actual:")
+print(
+    tabulate(
+        {"Actual": y_test.values[:10], "Predicted": churn_predictions[:10]},
+        headers="keys",
+        tablefmt="fancy_grid",
+    )
+)
