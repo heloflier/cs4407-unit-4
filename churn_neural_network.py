@@ -225,3 +225,30 @@ print("\nTraining set churn distribution:")
 print(y_train.value_counts(normalize=True).round(4))
 print("\nTest set churn distribution:")
 print(y_test.value_counts(normalize=True).round(4))
+
+# ---------------------------------------------------------------------------
+# Step 7 / Question 2.ii: Define the neural network architecture
+# ---------------------------------------------------------------------------
+# Two hidden layers (16, then 8 neurons) - enough capacity for the ~40
+# input features without being excessive for a binary classification
+# task. ReLU and adam are standard defaults at this dataset size (unlike
+# the earlier 4-sample XOR problem, where adam got stuck and lbfgs/tanh
+# was needed instead).
+
+print("\n" + "=" * 70)
+print("QUESTION 2.ii: DEFINE NEURAL NETWORK ARCHITECTURE")
+print("=" * 70)
+
+churn_model = MLPClassifier(
+    hidden_layer_sizes=(16, 8),
+    activation="relu",
+    solver="adam",
+    max_iter=500,
+    random_state=42,  # fixed seed for reproducible results
+)
+
+print("\nNetwork architecture:")
+print(f"  Input features: {X_train.shape[1]}")
+print(f"  Hidden layers: {churn_model.hidden_layer_sizes}")
+print(f"  Activation function: {churn_model.activation}")
+print("  Output: 1 neuron (binary classification - churn or not)")
