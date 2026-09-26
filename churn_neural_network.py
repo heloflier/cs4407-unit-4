@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 from sklearn.linear_model import Perceptron
 from sklearn.neural_network import MLPClassifier
+from sklearn.preprocessing import StandardScaler
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -178,3 +179,24 @@ churn_df = pd.get_dummies(churn_df, columns=multi_category_columns)
 print("\nDataset shape after encoding:", churn_df.shape)
 print("\nColumn dtypes after encoding:")
 print(churn_df.dtypes.value_counts())
+
+# ---------------------------------------------------------------------------
+# Step 5 / Question 2.i: Scale features
+# ---------------------------------------------------------------------------
+# Only the continuous numeric columns need scaling - binary and one-hot
+# encoded columns are already 0/1.
+
+print("\n" + "=" * 70)
+print("QUESTION 2.i: SCALE FEATURES")
+print("=" * 70)
+
+numeric_columns_to_scale = ["tenure", "MonthlyCharges", "TotalCharges"]
+
+print("\nFeature values before scaling:")
+print(churn_df[numeric_columns_to_scale].describe())
+
+scaler = StandardScaler()
+churn_df[numeric_columns_to_scale] = scaler.fit_transform(churn_df[numeric_columns_to_scale])
+
+print("\nFeature values after scaling:")
+print(churn_df[numeric_columns_to_scale].describe())
