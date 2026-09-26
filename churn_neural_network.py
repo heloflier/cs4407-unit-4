@@ -227,7 +227,7 @@ print("\nTest set churn distribution:")
 print(y_test.value_counts(normalize=True).round(4))
 
 # ---------------------------------------------------------------------------
-# Step 7 / Question 2.ii: Define the neural network architecture
+# Step 7 / Question 2.ii.a: Define the neural network architecture
 # ---------------------------------------------------------------------------
 # Two hidden layers (16, then 8 neurons) - enough capacity for the ~40
 # input features without being excessive for a binary classification
@@ -236,14 +236,14 @@ print(y_test.value_counts(normalize=True).round(4))
 # was needed instead).
 
 print("\n" + "=" * 70)
-print("QUESTION 2.ii: DEFINE NEURAL NETWORK ARCHITECTURE")
+print("QUESTION 2.ii.a: DEFINE NEURAL NETWORK ARCHITECTURE")
 print("=" * 70)
 
 churn_model = MLPClassifier(
     hidden_layer_sizes=(16, 8),
     activation="relu",
     solver="adam",
-    max_iter=500,
+    max_iter=1000,
     random_state=42,  # fixed seed for reproducible results
 )
 
@@ -252,3 +252,16 @@ print(f"  Input features: {X_train.shape[1]}")
 print(f"  Hidden layers: {churn_model.hidden_layer_sizes}")
 print(f"  Activation function: {churn_model.activation}")
 print("  Output: 1 neuron (binary classification - churn or not)")
+
+# ---------------------------------------------------------------------------
+# Step 8 / Question 2.ii.b: Train the model
+# ---------------------------------------------------------------------------
+
+print("\n" + "=" * 70)
+print("QUESTION 2.ii.b: TRAIN THE MODEL")
+print("=" * 70)
+
+churn_model.fit(X_train, y_train)
+
+print(f"\nTraining completed after {churn_model.n_iter_} iterations")
+print(f"Final training loss: {churn_model.loss_:.4f}")
