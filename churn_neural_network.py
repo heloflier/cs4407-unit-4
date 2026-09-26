@@ -12,6 +12,7 @@ from sklearn.linear_model import Perceptron
 from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, confusion_matrix, precision_recall_fscore_support
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -282,5 +283,58 @@ print(
         {"Actual": y_test.values[:10], "Predicted": churn_predictions[:10]},
         headers="keys",
         tablefmt="fancy_grid",
+    )
+)
+
+# ---------------------------------------------------------------------------
+# Step 10 / Question 3.a: Accuracy
+# ---------------------------------------------------------------------------
+
+print("\n" + "=" * 70)
+print("QUESTION 3.a: ACCURACY")
+print("=" * 70)
+
+churn_accuracy = accuracy_score(y_test, churn_predictions)
+print(f"\nTest accuracy: {churn_accuracy:.4f}")
+
+# ---------------------------------------------------------------------------
+# Step 11 / Question 3.b: Confusion matrix
+# ---------------------------------------------------------------------------
+
+print("\n" + "=" * 70)
+print("QUESTION 3.b: CONFUSION MATRIX")
+print("=" * 70)
+
+churn_confusion_matrix = confusion_matrix(y_test, churn_predictions)
+print(
+    "\n"
+    + tabulate(
+        churn_confusion_matrix,
+        headers=["Predicted No", "Predicted Yes"],
+        showindex=["Actual No", "Actual Yes"],
+        tablefmt="fancy_grid",
+    )
+)
+
+# ---------------------------------------------------------------------------
+# Step 12 / Question 3.c: Performance results (precision, recall, F1)
+# ---------------------------------------------------------------------------
+# The minority "Yes" (churn) class matters more here than usual, given
+# the real ~73.5%/26.5% class imbalance confirmed back in Question 2.i.
+
+print("\n" + "=" * 70)
+print("QUESTION 3.c: PERFORMANCE RESULTS")
+print("=" * 70)
+
+precision, recall, f1, support = precision_recall_fscore_support(
+    y_test, churn_predictions, labels=[0, 1], zero_division=0
+)
+print(
+    "\n"
+    + tabulate(
+        {"Class": ["No", "Yes"], "Precision": precision, "Recall": recall, "F1-score": f1},
+        headers="keys",
+        tablefmt="fancy_grid",
+        floatfmt=".2f",
     )
 )
