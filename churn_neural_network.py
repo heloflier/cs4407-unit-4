@@ -8,6 +8,10 @@ builds a neural network classifier to predict telecom customer churn.
 
 import numpy as np
 from sklearn.linear_model import Perceptron
+from sklearn.neural_network import MLPClassifier
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 from tabulate import tabulate
 
 # ---------------------------------------------------------------------------
@@ -45,4 +49,81 @@ for gate_name, inputs, outputs in [
     ]
     headers = [f"Input {i + 1}" for i in range(inputs.shape[1])] + ["Expected", "Predicted"]
     print(tabulate(table_rows, headers=headers, tablefmt="fancy_grid"))
-    
+
+# ---------------------------------------------------------------------------
+# Step 2 / Question 1.iii: XOR with a hidden-layer neural network
+# ---------------------------------------------------------------------------
+# XOR isn't linearly separable, so a single neuron can't learn it (shown
+# below for comparison); a hidden layer lets the network combine multiple
+# linear boundaries into a non-linear one.
+
+print("\n" + "=" * 70)
+print("QUESTION 1.iii: XOR GATE (HIDDEN-LAYER NETWORK)")
+print("=" * 70)
+
+xor_inputs = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
+xor_outputs = np.array([0, 1, 1, 0])
+
+xor_hidden_model = MLPClassifier(
+    hidden_layer_sizes=(8,), activation="tanh", solver="lbfgs", max_iter=5000, random_state=42
+)
+xor_hidden_model.fit(xor_inputs, xor_outputs)
+xor_hidden_predictions = xor_hidden_model.predict(xor_inputs)
+
+print("\nXOR gate (hidden-layer network):")
+table_rows = [
+    list(row) + [expected, predicted]
+    for row, expected, predicted in zip(xor_inputs, xor_outputs, xor_hidden_predictions)
+]
+print(tabulate(table_rows, headers=["Input 1", "Input 2", "Expected", "Predicted"], tablefmt="fancy_grid"))
+
+# Single neuron attempting XOR, for comparison - expected to fail, since
+# XOR is not linearly separable.
+xor_single_neuron_model = Perceptron(random_state=42)
+xor_single_neuron_model.fit(xor_inputs, xor_outputs)
+xor_single_neuron_predictions = xor_single_neuron_model.predict(xor_inputs)
+
+print("\nXOR gate (single neuron, for comparison):")
+table_rows = [
+    list(row) + [expected, predicted]
+    for row, expected, predicted in zip(xor_inputs, xor_outputs, xor_single_neuron_predictions)
+]
+print(tabulate(table_rows, headers=["Input 1", "Input 2", "Expected", "Predicted"], tablefmt="fancy_grid"))
+
+# Decision boundary comparison across all gates: AND and OR (both
+# linearly separable, single neuron succeeds) next to XOR failing with a
+# single neuron and succeeding with a hidden layer. One consistent color
+# scheme throughout: a correctly classified point blends into its
+# region's color, a misclassified point visibly clashes against it.
+and_model = Perceptron(random_state=42)  # fixed seed for reproducible results
+and_model.fit(and_inputs, and_outputs)
+
+or_model = Perceptron(random_state=42)  # fixed seed for reproducible results
+or_model.fit(or_inputs, or_outputs)
+
+xx, yy = np.meshgrid(np.linspace(-0.5, 1.5, 200), np.linspace(-0.5, 1.5, 200))
+grid_points = np.c_[xx.ravel(), yy.ravel()]
+
+fig, axes = plt.subplots(2, 2, figsize=(9, 8))
+
+panels = [
+    (axes[0, 0], and_model, and_inputs, and_outputs, "AND (single neuron)"),
+    (axes[0, 1], or_model, or_inputs, or_outputs, "OR (single neuron)"),
+    (axes[1, 0], xor_single_neuron_model, xor_inputs, xor_outputs, "XOR (single neuron - fails)"),
+    (axes[1, 1], xor_hidden_model, xor_inputs, xor_outputs, "XOR (hidden layer - solves)"),
+]
+
+for ax, model, gate_inputs, gate_outputs, title in panels:
+    predictions_grid = model.predict(grid_points).reshape(xx.shape)
+    ax.contourf(xx, yy, predictions_grid, levels=[-0.5, 0.5, 1.5], cmap="coolwarm", alpha=0.6, vmin=0, vmax=1)
+    ax.scatter(
+        gate_inputs[:, 0], gate_inputs[:, 1], c=gate_outputs, cmap="coolwarm",
+        edgecolors="black", s=120, zorder=3, vmin=0, vmax=1,
+    )
+    ax.set_title(title)
+    ax.set_xlabel("Input 1")
+    ax.set_ylabel("Input 2")
+
+plt.tight_layout()
+plt.savefig("logic_gates_decision_boundaries.png")
+print("\nSaved plot: logic_gates_decision_boundaries.png")
